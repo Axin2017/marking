@@ -14,32 +14,36 @@
     <div v-if="type" class="content-box">
       <el-table
         :data="currentMarkingList"
-        :span-method="arraySpanMethod"
-        border
-        class="marking-table"
+        style="width: 100%"
       >
+        <el-table-column type="expand">
+          <template slot-scope="props">
+            <el-table
+              :data="props.row.standerdScore"
+              style="width: 50%"
+            >
+              <el-table-column
+                label="标准"
+                prop="name"
+              />
+              <el-table-column
+                label="权重"
+                prop="weight"
+              />
+              <el-table-column
+                label="评分"
+                prop="score"
+              />
+            </el-table>
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="username"
           label="姓名"
+          prop="name"
         />
         <el-table-column
-          prop="standerd"
-          label="项目"
-        />
-        <el-table-column
-          prop="weight"
-          sortable
-          label="权重"
-        />
-        <el-table-column
-          prop="marking"
-          sortable
-          label="评分"
-        />
-        <el-table-column
-          prop="total"
-          sortable
           label="总分"
+          prop="totalScore"
         />
       </el-table>
     </div>
@@ -57,49 +61,39 @@ export default {
     this.userList = userList
     this.standerdList = standerdList
     return {
-      type: ''
+      type: '',
+      currentMarkingList: []
     }
   },
-  computed: {
-    currentStanderd() {
-      return this.standerdList.filter(
-        standerd => standerd.orgid === this.type
-      )[0].standerd
-    },
-    currentMarkingList() {
-      const markingList = []
-      this.userList.forEach(user => {
-        this.currentStanderd.forEach(standerd => {
+  watch: {
+    type() {
+      if (this.type) {
+        const currentStanderd = this.standerdList.filter(
+          standerd => standerd.orgid === this.type
+        )[0].standerd.map(s => {
+          const standerScore = { ...s }
+          standerScore.score = 0
+          return standerScore
+        })
+        const currentUserList = this.userList.filter(
+          user => user.orgid === this.type
+        )
+        const markingList = []
+        currentUserList.forEach(user => {
           markingList.push({
-            username: user.name,
-            standerd: standerd.name,
-            weight: standerd.weight,
-            marking: 0,
-            total: 0
+            name: user.name,
+            id: user.id,
+            standerdScore: currentStanderd,
+            totalScore: 0
           })
         })
-      })
-      console.log(markingList)
-      return markingList
+        this.currentMarkingList = markingList
+      } else {
+        this.currentMarkingList = []
+      }
     }
   },
   methods: {
-    arraySpanMethod({ row, column, rowIndex, columnIndex }) {
-      const rowspanLengh = this.currentStanderd.length
-      if (columnIndex === 0) {
-        if (rowIndex % rowspanLengh === 0) {
-          return [rowspanLengh, 1]
-        } else {
-          return [0, 0]
-        }
-      } else if (columnIndex === 4) {
-        if (rowIndex % rowspanLengh === 0) {
-          return [rowspanLengh, 1]
-        } else {
-          return [0, 0]
-        }
-      }
-    }
   }
 }
 </script>
@@ -108,7 +102,7 @@ export default {
   padding: 0 20px;
 }
 .type-box,
-.marking-table{
+.content-box{
   width: 100%;
   margin-top: 50px;
 }
