@@ -1,13 +1,19 @@
 <template>
   <div class="add-marking-wrapper">
-    <div class="type-box">
+    <div class="function-box">
       选择类别:
       <el-select v-model="type" placeholder="请选择">
         <el-option v-for="org in orgList" :key="org.id" :label="org.name" :value="org.id" />
       </el-select>
+      <template v-if="type">
+        <el-input ref="title" v-model="title" class="title-box" placeholder="请输入评分标题" />
+        <el-button type="success" class="commit-btn" @click="expandAll">全部展开</el-button>
+        <el-button type="success" class="commit-btn" @click="unexpandAll">全部收起</el-button>
+        <el-button type="primary" class="commit-btn" @click="commit">提交</el-button>
+      </template>
     </div>
     <div v-if="type" class="content-box">
-      <el-table :data="currentMarkingList" style="width: 100%">
+      <el-table :data="currentMarkingList" row-class-name="pointer" style="width: 100%" row-key="name" :expand-row-keys="expandRowKeys" @row-click="rowClick">
         <el-table-column type="expand">
           <div slot-scope="props" class="score-table">
             <el-table :data="props.row.standerdScore" style="width: 100%">
@@ -40,7 +46,9 @@ export default {
     this.standerdList = standerdList
     return {
       type: '',
-      currentMarkingList: []
+      currentMarkingList: [],
+      expandRowKeys: [],
+      title: ''
     }
   },
   watch: {
@@ -83,6 +91,33 @@ export default {
         totalScore = totalScore.toFixed(2)
       }
       marking.totalScore = totalScore
+    },
+    rowClick(row, event, column) {
+      if (this.expandRowKeys.includes(row.name)) {
+        this.expandRowKeys.splice(this.expandRowKeys.indexOf(row.name), 1)
+      } else {
+        this.expandRowKeys.push(row.name)
+      }
+    },
+    expandAll() {
+      const allKeys = []
+      this.currentMarkingList.forEach(marking => {
+        allKeys.push(marking.name)
+      })
+      this.expandRowKeys = allKeys
+    },
+    unexpandAll() {
+      this.expandRowKeys = []
+    },
+    commit() {
+      if (!this.title) {
+        this.$message({
+          message: '请输入标题信息',
+          type: 'warning'
+        })
+        this.$refs.title.focus()
+        return
+      }
     }
   }
 }
@@ -91,7 +126,7 @@ export default {
 .add-marking-wrapper {
   padding: 0 20px;
 }
-.type-box,
+.function-box,
 .content-box {
   width: 100%;
   margin-top: 50px;
@@ -100,5 +135,8 @@ export default {
   width: 50%;
   padding: 10px;
   background-color: #ccc;
+}
+.title-box{
+  width:300px;
 }
 </style>
