@@ -30,7 +30,7 @@ const mutations = {
 
 const actions = {
   // user login
-  login({ commit }, userInfo) {
+  login({ dispatch, commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(data => {
@@ -38,6 +38,7 @@ const actions = {
         commit('SET_TOKEN', data.token)
         setToken(data.token)
         commit('SET_ROLES', data.roles)
+        dispatch('permission/generateRoutes', data.roles, { root: true })
         resolve()
       }).catch(error => {
         reject(error)
