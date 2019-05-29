@@ -1,5 +1,5 @@
 import axios from 'axios'
-
+import qs from 'qs'
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
@@ -10,6 +10,9 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
+    if (config.method === 'post') {
+      config.data = qs.stringify(config.data)
+    }
     return config
   },
   error => {

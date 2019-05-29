@@ -34,6 +34,8 @@
   </div>
 </template>
 <script>
+import utils from '@/utils'
+import markingApi from '@/api/marking'
 const orgList = require('@/dataJson/org.json')
 const userList = require('@/dataJson/user.json')
 const standerdList = require('@/dataJson/standerd.json')
@@ -54,13 +56,13 @@ export default {
   watch: {
     type() {
       if (this.type) {
-        const currentStanderd = this.standerdList.filter(
-          standerd => standerd.orgid === this.type
-        )[0].standerd.map(s => {
-          const standerScore = { ...s }
-          standerScore.score = 0
-          return standerScore
-        })
+        const currentStanderd = this.standerdList
+          .filter(standerd => standerd.orgid === this.type)[0]
+          .standerd.map(s => {
+            const standerScore = { ...s }
+            standerScore.score = 0
+            return standerScore
+          })
         const currentUserList = this.userList.filter(
           user => user.orgid === this.type
         )
@@ -85,7 +87,10 @@ export default {
         return total + current.weight
       }, 0)
       let totalScore = marking.standerdScore.reduce((total, current) => {
-        return parseFloat(total) + (parseInt(current.score) * current.weight / totalWeight)
+        return (
+          parseFloat(total) +
+          parseInt(current.score) * current.weight / totalWeight
+        )
       }, 0)
       if ((totalScore + '').indexOf('.') > -1) {
         totalScore = totalScore.toFixed(2)
@@ -118,6 +123,14 @@ export default {
         this.$refs.title.focus()
         return
       }
+      markingApi
+        .addMarking({ title: this.title, marking: this.currentMarkingList, addDate: utils.parseTime(new Date()), updateDate: '' })
+        .then(r => {
+          console.log(r)
+        })
+        .catch(e => {
+          console.log(e)
+        })
     }
   }
 }
@@ -131,12 +144,12 @@ export default {
   width: 100%;
   margin-top: 50px;
 }
-.score-table{
+.score-table {
   width: 50%;
   padding: 10px;
   background-color: #ccc;
 }
-.title-box{
-  width:300px;
+.title-box {
+  width: 300px;
 }
 </style>
