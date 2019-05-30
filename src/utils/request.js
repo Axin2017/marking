@@ -26,7 +26,10 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     console.log(response)
-    const res = response.data
+    if (response.data.status === 0) {
+      return Promise.reject(new Error(response.data))
+    }
+    const res = response.data.data
     return res
   },
   error => {

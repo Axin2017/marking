@@ -1,17 +1,19 @@
 <template>
-  <el-table :data="marking" row-class-name="pointer" style="width: 100%" row-key="name" :expand-row-keys="expandRowKeys" @row-click="rowClick">
-    <el-table-column type="expand">
-      <div slot-scope="props" class="score-table">
-        <el-table :data="props.row.standerdScore" style="width: 100%">
-          <el-table-column label="标准" prop="name" />
-          <el-table-column label="权重" prop="weight" />
-          <el-table-column label="评分" prop="score" />
-        </el-table>
-      </div>
-    </el-table-column>
-    <el-table-column label="姓名" prop="name" sortable />
-    <el-table-column label="总分" prop="totalScore" sortable />
-  </el-table>
+  <div class="marking-deatil-wapper">
+    <el-table v-loading="markingLoading" :data="marking" row-class-name="pointer" style="width: 100%" row-key="name" :expand-row-keys="expandRowKeys" @row-click="rowClick">
+      <el-table-column type="expand">
+        <div slot-scope="props" class="score-table">
+          <el-table :data="props.row.standerdScore" style="width: 100%">
+            <el-table-column label="标准" prop="name" />
+            <el-table-column label="权重" prop="weight" />
+            <el-table-column label="评分" prop="score" />
+          </el-table>
+        </div>
+      </el-table-column>
+      <el-table-column label="姓名" prop="name" sortable />
+      <el-table-column label="总分" prop="totalScore" sortable />
+    </el-table>
+  </div>
 </template>
 <script>
 import markingApi from '@/api/marking'
@@ -27,7 +29,8 @@ export default {
   data() {
     return {
       marking: [],
-      expandRowKeys: []
+      expandRowKeys: [],
+      markingLoading: true
     }
   },
   watch: {},
@@ -39,6 +42,7 @@ export default {
     getMarkingData() {
       markingApi.getMarking({ _id: this.id }).then(marking => {
         this.marking = marking[0].marking
+        this.markingLoading = false
       }).catch(e => { console.log(e) })
     },
     rowClick(row, event, column) {
@@ -62,6 +66,9 @@ export default {
 }
 </script>
 <style scoped>
+.marking-deatil-wapper{
+  padding: 30px 10px;
+}
 .score-table {
   width: 50%;
   padding: 10px;

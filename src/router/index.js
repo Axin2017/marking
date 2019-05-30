@@ -99,9 +99,8 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/manage',
+    path: '/markingManage',
     component: Layout,
-    redirect: '/manage/index',
     alwaysShow: true,
     meta: {
       title: '评分管理',
@@ -111,7 +110,7 @@ export const constantRoutes = [
       {
         path: 'modify',
         component: () => import('@/views/manage/marking/modifyMarking'),
-        name: 'modify',
+        name: 'ModifyMarking',
         meta: { title: '编辑评分', icon: 'index' }
       },
       {
@@ -119,6 +118,23 @@ export const constantRoutes = [
         component: () => import('@/views/manage/marking/addMarking'),
         name: 'AddMarking',
         meta: { title: '添加评分', icon: 'index', noCache: false }
+      }
+    ]
+  },
+  {
+    path: '/standerdManage',
+    component: Layout,
+    alwaysShow: true,
+    meta: {
+      title: '评分标准管理',
+      icon: 'index'
+    },
+    children: [
+      {
+        path: 'modify',
+        component: () => import('@/views/manage/standerd/modifyStanderd'),
+        name: 'ModifyStanderd',
+        meta: { title: '编辑标准', icon: 'index' }
       }
     ]
   }
