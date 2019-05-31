@@ -29,8 +29,17 @@ function delStanderd(query) {
   })
 }
 
+function updateStanderd(data) {
+  return request({
+    url: '/updateStanderd',
+    method: 'post',
+    data
+  })
+}
+
 export default {
   getStanderd,
   addStanderd,
-  delStanderd
+  delStanderd,
+  updateStanderd
 }

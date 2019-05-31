@@ -137,6 +137,23 @@ export const constantRoutes = [
         meta: { title: '编辑标准', icon: 'index' }
       }
     ]
+  },
+  {
+    path: '/userManage',
+    component: Layout,
+    alwaysShow: true,
+    meta: {
+      title: '用户管理',
+      icon: 'index'
+    },
+    children: [
+      {
+        path: 'modify',
+        component: () => import('@/views/manage/user/modifyUser'),
+        name: 'ModifyUser',
+        meta: { title: '编辑用户', icon: 'index' }
+      }
+    ]
   }
 ]
 
