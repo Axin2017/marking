@@ -65,35 +65,42 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '',
+    path: '/',
     component: Layout,
     redirect: '/index',
     children: [
       {
         path: 'index',
-        component: () => import('@/views/index/index'),
-        name: 'index',
-        meta: { title: '首页', icon: 'index', noCache: true, affix: true }
+        component: () => import('@/views/dashboard/index'),
+        name: 'Dashboard',
+        meta: { title: '首页', icon: 'dashboard', affix: true }
       }
     ]
   },
   {
-    path: '/dashboard',
+    path: '/marking',
     component: Layout,
-    redirect: '/dashboard/index',
+    redirect: '/index',
     children: [
       {
         path: 'index',
-        component: () => import('@/views/dashboard/index'),
-        name: 'Dashboard',
-        meta: { title: '查看评分', icon: 'dashboard' }
+        component: () => import('@/views/Marking/index'),
+        name: 'Marking',
+        meta: { title: '评分列表', icon: 'index' }
+      },
+      {
+        path: 'markingDetail/:id',
+        name: 'MarkingDetail',
+        hidden: true,
+        props: true,
+        meta: { title: '评分详细' },
+        component: () => import('@/views/Marking/markingDetail')
       }
     ]
   },
   {
-    path: '/manage',
+    path: '/markingManage',
     component: Layout,
-    redirect: '/manage/index',
     alwaysShow: true,
     meta: {
       title: '评分管理',
@@ -102,15 +109,49 @@ export const constantRoutes = [
     children: [
       {
         path: 'modify',
-        component: () => import('@/views/manage/modifyMarking'),
-        name: 'modify',
+        component: () => import('@/views/manage/marking/modifyMarking'),
+        name: 'ModifyMarking',
         meta: { title: '编辑评分', icon: 'index' }
       },
       {
         path: 'add',
-        component: () => import('@/views/manage/addMarking'),
-        name: 'add',
-        meta: { title: '添加评分', icon: 'index' }
+        component: () => import('@/views/manage/marking/addMarking'),
+        name: 'AddMarking',
+        meta: { title: '添加评分', icon: 'index', noCache: false }
+      }
+    ]
+  },
+  {
+    path: '/standerdManage',
+    component: Layout,
+    alwaysShow: true,
+    meta: {
+      title: '评分标准管理',
+      icon: 'index'
+    },
+    children: [
+      {
+        path: 'modify',
+        component: () => import('@/views/manage/standerd/modifyStanderd'),
+        name: 'ModifyStanderd',
+        meta: { title: '编辑标准', icon: 'index' }
+      }
+    ]
+  },
+  {
+    path: '/userManage',
+    component: Layout,
+    alwaysShow: true,
+    meta: {
+      title: '用户管理',
+      icon: 'index'
+    },
+    children: [
+      {
+        path: 'modify',
+        component: () => import('@/views/manage/user/modifyUser'),
+        name: 'ModifyUser',
+        meta: { title: '编辑用户', icon: 'index' }
       }
     ]
   }
