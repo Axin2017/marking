@@ -6,7 +6,7 @@
       <el-row :gutter="20">
         <el-col v-for="user in userList" :key="user._id" :span="2">
           <div class="user-box">
-            <div class="user-img" />
+            <div :class="user.sex === '女'?'user-img-girl':'user-img-boy'" />
             <div class="user-name">
               {{ user.username }}
             </div>
@@ -136,7 +136,7 @@ export default {
     },
     editUser(user) {
       this.isEdit = true
-      this.userForm = user
+      this.userForm = { ...user }
       this.addDialogVisible = true
     }
   }
@@ -163,9 +163,13 @@ export default {
 .user-box:hover > .op-box {
   visibility: visible;
 }
-.user-img {
+.user-img-boy {
   height: 32px;
   background: url('../../../assets/user/boy_32.png') no-repeat center;
+}
+.user-img-girl {
+  height: 32px;
+  background: url('../../../assets/user/girl_32.png') no-repeat center;
 }
 .user-name {
   margin: 5px auto;

@@ -154,6 +154,23 @@ export const constantRoutes = [
         meta: { title: '编辑用户', icon: 'index' }
       }
     ]
+  },
+  {
+    path: '/orgManage',
+    component: Layout,
+    alwaysShow: true,
+    meta: {
+      title: '组织管理',
+      icon: 'index'
+    },
+    children: [
+      {
+        path: 'modify',
+        component: () => import('@/views/manage/organization/modifyOrg'),
+        name: 'ModifyOrg',
+        meta: { title: '编辑组织', icon: 'index' }
+      }
+    ]
   }
 ]
 

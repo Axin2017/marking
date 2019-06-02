@@ -172,7 +172,7 @@ export default {
     },
     editStanderd(standerd) {
       this.isEdit = true
-      this.standerdForm = standerd
+      this.standerdForm = { ...standerd }
       this.addDialogVisible = true
     }
   }

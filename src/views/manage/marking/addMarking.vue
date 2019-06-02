@@ -34,7 +34,7 @@
   </div>
 </template>
 <script>
-import utils from '@/utils'
+import { parseTime } from '@/utils'
 import markingApi from '@/api/marking'
 const orgList = require('@/dataJson/org.json')
 const userList = require('@/dataJson/user.json')
@@ -124,7 +124,7 @@ export default {
         return
       }
       markingApi
-        .addMarking({ title: this.title, marking: this.currentMarkingList, addDate: utils.parseTime(new Date()), updateDate: '' })
+        .addMarking({ title: this.title, marking: this.currentMarkingList, addDate: parseTime(new Date()), updateDate: '' })
         .then(r => {
           console.log(r)
         })
