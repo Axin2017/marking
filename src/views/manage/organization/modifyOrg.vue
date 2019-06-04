@@ -1,32 +1,28 @@
 <template>
   <div class="org-wrapper">
+    <el-button type="primary" class="org-add" icon="el-icon-plus" @click="addDialogShow">添加</el-button>
     <div v-show="isNoData" class="nodata">暂时没有数据</div>
     <div class="org-user-box">
       <div class="org-box">
-        <!-- <el-collapse v-model="activeName" accordion class="org-list" @change="orgActivedChange">
+        <el-collapse v-model="activeName" accordion class="org-list" @change="orgActivedChange">
           <el-collapse-item v-for="(org,i) in orgList" :key="i" :name="org.name">
             <template slot="title">
               <span class="org-title">{{ org.name }}</span>
-              <el-button type="text" class="org-rename" icon="el-icon-edit" title="改名" @click="rename(org)" />
+              <el-button type="text" class="org-rename" icon="el-icon-edit" title="改名" @click.stop="editOrg(org)" />
               <el-button type="text" class="org-remove" icon="el-icon-delete" title="删除" @click.stop="removeOrg(org)" />
             </template>
-            <el-tag v-for="user in org.users" :key="user._id" closable @close="removeUser(org,user)">
+            <el-tag v-for="user in org.users" :key="user._id" class="user-tag" closable @close="removeUser(org,user,i)">
               {{ user.username }}
             </el-tag>
           </el-collapse-item>
-        </el-collapse> -->
-        <div v-for="(org,i) in orgList" :key="i">
-          <div @click="setCurrentName(org.name)">{{ org.name }}</div>
-          <el-tag v-for="user in org.users" :key="user._id" closable @close="removeUser(org,user)">
-            {{ user.username }}
-          </el-tag>
-        </div>
-        <!-- <el-button type="primary" class="org-add" icon="el-icon-plus" @click="addDialogShow" /> -->
+        </el-collapse>
       </div>
       <div v-for="(org,i) in orgList" v-show="currentName === org.name" :key="i" class="user-box">
-        <!-- <el-tree :data="org.userList" show-checkbox node-key="_id" :default-checked-keys="org.orgUserIdList" :props="defaultProps" @check="userChange" /> -->
+        <div class="header">人员选择</div>
         <ul>
-          <li v-for="u in org.userList" :key="u._id"><input v-model="u.checked" type="checkbox" @change="userChange(u,org)">{{ u.username }}</li>
+          <li v-for="u in org.userList" :key="u._id" class="user-item">
+            <el-checkbox v-model="u.checked" @change="userChange(u,org,i)">{{ u.username }}</el-checkbox>
+          </li>
         </ul>
       </div>
       <el-dialog :title="isEdit?'编辑':'添加'" :visible="addDialogVisible" width="400px" class="add-dialog" center :show-close="false">
@@ -51,18 +47,15 @@ export default {
   props: [],
   data() {
     this.orgFormTemp = {
-      name: ''
-    }
-    this.defaultProps = {
-      label: 'username'
+      name: '',
+      users: []
     }
     return {
       orgList: [],
-      userList: [],
-      orgUserIdList: [],
       addDialogVisible: false,
       orgForm: {
-        name: ''
+        name: '',
+        users: []
       },
       currentName: '',
       isEdit: false,
@@ -71,33 +64,18 @@ export default {
     }
   },
   computed: {
-    userListMapObj() {
-      const userListMapOjb = {}
-      this.userList.forEach(u => {
-        userListMapOjb[u._id] = u
-      })
-      return userListMapOjb
-    },
-    currentOrg() {
-      const list = this.orgList.filter(o => o.name === this.currentName)
-      if (list.length) {
-        return list[0]
-      } else {
-        return null
-      }
-    }
   },
   watch: {},
   created() {},
   mounted() {
     this.getOrgAndUserList()
   },
+  beforeDestroy() {
+    this.saveUpdatedOrg()
+  },
   methods: {
-    setCurrentName(name) {
-      this.currentName = name
-    },
-    // 用户选中状态
-    userChange(user, org) {
+    // 用户选中状态改变
+    userChange(user, org, i) {
       if (user.checked) {
         org.users.push(user)
       } else {
@@ -110,14 +88,10 @@ export default {
         }
         org.users.splice(index, 1)
       }
+      org.isUpdate = true
+      this.$set(this.orgList, i, org)
     },
-    getCheckedUsers(checkedKeys) {
-      const checkedUsers = []
-      checkedKeys.forEach(u => {
-        checkedUsers.push({ ...this.userListMapObj[u] })
-      })
-      return checkedUsers
-    },
+    // 激活不同的组织机构
     orgActivedChange(name) {
       if (!name) {
         return
@@ -125,20 +99,27 @@ export default {
       this.currentName = name
       this.saveUpdatedOrg()
     },
+    // 保存更新后的组织机构
     saveUpdatedOrg() {
-      const hasUpdadeList = this.orgList.filter(o => o.isUpdate)
-      if (hasUpdadeList.length > 0) {
-        hasUpdadeList.forEach(updatedOrg => {
-          delete updateOrg.isUpdate
-          updateOrg({ _id: updatedOrg._id, set: updateOrg }).catch(e => {
+      for (let i = 0; i < this.orgList.length; i++) {
+        const o = this.orgList[i]
+        if (o.isUpdate) {
+          o.isUpdate = false
+          // 构建更新对象
+          const { _id, users, name } = o
+          const updateUsers = users.map(u => {
+            const { _id, username, password, sex } = u
+            return { _id, username, password, sex }
+          })
+          updateOrg({ query: { _id: o._id }, set: { _id, users: updateUsers, name }}).catch(e => {
             console.log(e)
           })
-        })
+        }
       }
     },
+    // 获取组织机构和用户列表，先获取用户列表，以免组织机构列表出来的时候，机构没出来
     getOrgAndUserList() {
       getUser().then(userList => {
-        this.userList = userList
         getOrg().then(orgList => {
           this.orgList = orgList
           if (this.orgList && this.orgList.length) {
@@ -149,12 +130,11 @@ export default {
           this.orgList.forEach(o => {
             o.userList = JSON.parse(JSON.stringify(userList))
             o.users = o.users || []
-            o.orgUserIdList = Array.isArray(o.users)
-              ? o.users.reduce((total, current) => {
-                total.push(current.name)
-                return total
-              }, [])
-              : []
+            for (let i = 0; i < o.userList.length; i++) {
+              if (o.users.some(u => u._id === o.userList[i]._id)) {
+                o.userList[i].checked = true
+              }
+            }
           })
         })
       })
@@ -168,11 +148,7 @@ export default {
       this.addDialogVisible = false
     },
     commit() {
-      if (
-        !this.orgForm.orgname ||
-        !this.orgForm.password ||
-        !this.orgForm.sex
-      ) {
+      if (!this.orgForm.name) {
         this.$message.error('请将必填项填完整')
         return
       }
@@ -180,27 +156,25 @@ export default {
         // 更新
         updateOrg({
           query: { _id: this.orgForm._id },
-          set: this.orgForm
+          set: { $set: { name: this.orgForm.name }}
         }).then(r => {
           this.$message.success('更新成功')
           this.orgList = []
-          this.addDialogVisible = false
-          this.orgForm = this.orgFormTemp
-          this.getOrgList()
+          this.cancelAdd()
+          this.getOrgAndUserList()
         })
       } else {
         // 新增
         addOrg(this.orgForm).then(r => {
           this.$message.success('添加成功')
           this.orgList = []
-          this.addDialogVisible = false
-          this.orgForm = this.orgFormTemp
-          this.getOrgList()
+          this.cancelAdd()
+          this.getOrgAndUserList()
         })
       }
     },
     removeOrg(org) {
-      this.$confirm('此操作将删除该用户, 是否继续?', '提示', {
+      this.$confirm('此操作将删除该组织机构, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -209,19 +183,18 @@ export default {
           deleteOrg({ _id: org._id }).then(r => {
             this.$message.success('删除成功')
             this.orgList = []
-            this.addDialogVisible = false
-            this.getOrgList()
+            this.getOrgAndUserList()
           })
         })
         .catch(() => {})
     },
-    rename(org) {},
     editOrg(org) {
       this.isEdit = true
       this.orgForm = { ...org }
       this.addDialogVisible = true
     },
-    removeUser(org, user) {
+    // 组织机构中删除用户
+    removeUser(org, user, i) {
       let userIndex = -1
       for (let i = 0; i < org.users.length; i++) {
         if (org.users[i]._id === user._id) {
@@ -236,6 +209,8 @@ export default {
           break
         }
       }
+      org.isUpdate = true
+      this.$set(this.orgList, i, org)
     }
   }
 }
@@ -268,7 +243,6 @@ export default {
   display: inline-block;
 }
 .org-add {
-  width: 100%;
   margin-top: 10px;
 }
 .org-title {
@@ -281,5 +255,20 @@ export default {
 .org-rename {
   position: absolute;
   right: 60px;
+}
+.user-tag{
+  margin-right: 5px;
+}
+.user-item{
+  padding-left: 5px;
+  list-style: none;
+  margin-bottom: 5px;
+}
+.header{
+  height: 30px;
+  line-height: 30px;
+  padding-left: 10px;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 10px;
 }
 </style>

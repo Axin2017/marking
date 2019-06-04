@@ -103,8 +103,7 @@ export default {
         }).then(r => {
           this.$message.success('更新成功')
           this.userList = []
-          this.addDialogVisible = false
-          this.userForm = this.userFormTemp
+          this.cancelAdd()
           this.getUserList()
         })
       } else {
@@ -112,8 +111,7 @@ export default {
         addUser(this.userForm).then(r => {
           this.$message.success('添加成功')
           this.userList = []
-          this.addDialogVisible = false
-          this.userForm = this.userFormTemp
+          this.cancelAdd()
           this.getUserList()
         })
       }
@@ -128,7 +126,6 @@ export default {
           deleteUser({ _id: id }).then(r => {
             this.$message.success('删除成功')
             this.userList = []
-            this.addDialogVisible = false
             this.getUserList()
           })
         })
