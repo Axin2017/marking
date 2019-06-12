@@ -17,13 +17,21 @@
           </el-collapse-item>
         </el-collapse>
       </div>
-      <div v-for="(org,i) in orgList" v-show="currentName === org.name" :key="i" class="user-box">
-        <div class="header">人员选择</div>
-        <ul>
-          <li v-for="u in org.userList" :key="u._id" class="user-item">
-            <el-checkbox v-model="u.checked" @change="userChange(u,org,i)">{{ u.username }}</el-checkbox>
-          </li>
-        </ul>
+      <div v-for="(org,i) in orgList" v-show="currentName === org.name" :key="org._id" class="user-standerd-box">
+        <div class="user-box">
+          <div class="header">人员选择</div>
+          <ul>
+            <li v-for="u in org.userList" :key="org._id+u._id" class="user-item">
+              <el-checkbox v-model="u.checked" @change="userChange(u,org,i)">{{ u.username }}</el-checkbox>
+            </li>
+          </ul>
+        </div>
+        <div class="standerd-box">
+          <div class="header">评分标准选择</div>
+          <el-radio-group v-model="org.standerdId" @change="standerdChange(org,i)">
+            <el-radio v-for="s in org.standerdList" :key="org._id+s._id" :label="s._id">{{ s.name }}</el-radio>
+          </el-radio-group>
+        </div>
       </div>
       <el-dialog :title="isEdit?'编辑':'添加'" :visible="addDialogVisible" width="400px" class="add-dialog" center :show-close="false">
         <el-form label-width="80px" :model="orgForm">
@@ -37,10 +45,12 @@
         </span>
       </el-dialog>
     </div>
-  </div></template>
+  </div>
+</template>
 <script>
 import { getOrg, deleteOrg, addOrg, updateOrg } from '@/api/org'
 import { getUser } from '@/api/user'
+import standerdApi from '@/api/standerd'
 export default {
   name: '',
   components: {},
@@ -57,14 +67,14 @@ export default {
         name: '',
         users: []
       },
+      standerdList: [],
       currentName: '',
       isEdit: false,
       isNoData: false,
       activeName: ''
     }
   },
-  computed: {
-  },
+  computed: {},
   watch: {},
   created() {},
   mounted() {
@@ -91,6 +101,13 @@ export default {
       org.isUpdate = true
       this.$set(this.orgList, i, org)
     },
+    // 评分标准改变
+    standerdChange(org, i) {
+      console.log(org)
+      org.standerd = this.standerdList.filter(s => s._id === org.standerdId)[0]
+      org.isUpdate = true
+      this.$set(this.orgList, i, org)
+    },
     // 激活不同的组织机构
     orgActivedChange(name) {
       if (!name) {
@@ -106,12 +123,15 @@ export default {
         if (o.isUpdate) {
           o.isUpdate = false
           // 构建更新对象
-          const { _id, users, name } = o
+          const { _id, name, users, standerd } = o
           const updateUsers = users.map(u => {
             const { _id, username, password, sex } = u
             return { _id, username, password, sex }
           })
-          updateOrg({ query: { _id: o._id }, set: { _id, users: updateUsers, name }}).catch(e => {
+          updateOrg({
+            query: { _id: o._id },
+            set: { _id, users: updateUsers, name, standerd }
+          }).catch(e => {
             console.log(e)
           })
         }
@@ -120,21 +140,28 @@ export default {
     // 获取组织机构和用户列表，先获取用户列表，以免组织机构列表出来的时候，机构没出来
     getOrgAndUserList() {
       getUser().then(userList => {
-        getOrg().then(orgList => {
-          this.orgList = orgList
-          if (this.orgList && this.orgList.length) {
-            this.isNoData = false
-          } else {
-            this.isNoData = true
-          }
-          this.orgList.forEach(o => {
-            o.userList = JSON.parse(JSON.stringify(userList))
-            o.users = o.users || []
-            for (let i = 0; i < o.userList.length; i++) {
-              if (o.users.some(u => u._id === o.userList[i]._id)) {
-                o.userList[i].checked = true
-              }
+        standerdApi.getStanderd().then(standerdList => {
+          this.standerdList = standerdList
+          getOrg().then(orgList => {
+            this.orgList = orgList
+            if (this.orgList && this.orgList.length) {
+              this.isNoData = false
+            } else {
+              this.isNoData = true
             }
+            this.orgList.forEach(o => {
+              o.userList = JSON.parse(JSON.stringify(userList))
+              o.users = o.users || []
+              for (let i = 0; i < o.userList.length; i++) {
+                if (o.users.some(u => u._id === o.userList[i]._id)) {
+                  o.userList[i].checked = true
+                }
+              }
+              if (o.standerd) {
+                o.standerdId = o.standerd._id
+              }
+              o.standerdList = JSON.parse(JSON.stringify(standerdList))
+            })
           })
         })
       })
@@ -220,7 +247,9 @@ export default {
   padding: 30px;
 }
 .org-box,
-.user-box {
+.user-box,
+.standerd-box
+ {
   position: relative;
   height: 500px;
   padding: 10px;
@@ -228,11 +257,19 @@ export default {
   box-shadow: 0 0 5px 1px #ccc;
 }
 .org-box {
+  width: 400px;
+}
+.user-standerd-box {
   width: 500px;
 }
-.user-box {
-  width: 250px;
-  margin-left: 90px;
+.user-standerd-box > div {
+  display: inline-block;
+}
+.user-box,
+.standerd-box
+ {
+  width: 160px;
+  margin-left: 80px;
 }
 .org-user-box {
   width: 1000px;
@@ -256,15 +293,15 @@ export default {
   position: absolute;
   right: 60px;
 }
-.user-tag{
+.user-tag {
   margin-right: 5px;
 }
-.user-item{
+.user-item {
   padding-left: 5px;
   list-style: none;
   margin-bottom: 5px;
 }
-.header{
+.header {
   height: 30px;
   line-height: 30px;
   padding-left: 10px;
