@@ -37,6 +37,9 @@ const actions = {
         // const { data } = response
         commit('SET_TOKEN', data.token)
         setToken(data.token)
+        if (!data.roles || data.roles.length === 0) {
+          data.roles = ['editor']
+        }
         commit('SET_ROLES', data.roles)
         dispatch('permission/generateRoutes', data.roles, { root: true })
         resolve()

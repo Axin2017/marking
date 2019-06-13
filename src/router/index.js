@@ -97,27 +97,35 @@ export const constantRoutes = [
         component: () => import('@/views/Marking/markingDetail')
       }
     ]
-  },
+  }
+]
+
+/**
+ * asyncRoutes
+ * the routes that need to be dynamically loaded based on user roles
+ */
+export const asyncRoutes = [
   {
     path: '/markingManage',
     component: Layout,
     alwaysShow: true,
     meta: {
       title: '评分管理',
-      icon: 'index'
+      icon: 'index',
+      roles: ['admin']
     },
     children: [
       {
         path: 'modify',
         component: () => import('@/views/manage/marking/modifyMarking'),
         name: 'ModifyMarking',
-        meta: { title: '编辑评分', icon: 'index' }
+        meta: { title: '编辑评分', icon: 'index', roles: ['admin'] }
       },
       {
         path: 'add',
         component: () => import('@/views/manage/marking/addMarking'),
         name: 'AddMarking',
-        meta: { title: '添加评分', icon: 'index', noCache: false }
+        meta: { title: '添加评分', icon: 'index', noCache: false, roles: ['admin'] }
       },
       {
         path: 'edit/:id',
@@ -125,14 +133,14 @@ export const constantRoutes = [
         name: 'EditMarking',
         hidden: true,
         props: true,
-        meta: { title: '编辑评分内容', icon: 'index', noCache: false }
+        meta: { title: '编辑评分内容', icon: 'index', noCache: false, roles: ['admin'] }
       },
       {
         path: 'markingDetail/:id',
         name: 'MarkingDetail',
         hidden: true,
         props: true,
-        meta: { title: '评分详细' },
+        meta: { title: '评分详细', roles: ['admin'] },
         component: () => import('@/views/manage/marking/markingDetail')
       }
     ]
@@ -143,14 +151,15 @@ export const constantRoutes = [
     alwaysShow: true,
     meta: {
       title: '评分标准管理',
-      icon: 'index'
+      icon: 'index',
+      roles: ['admin']
     },
     children: [
       {
         path: 'modify',
         component: () => import('@/views/manage/standerd/modifyStanderd'),
         name: 'ModifyStanderd',
-        meta: { title: '编辑标准', icon: 'index' }
+        meta: { title: '编辑标准', icon: 'index', roles: ['admin'] }
       }
     ]
   },
@@ -160,14 +169,15 @@ export const constantRoutes = [
     alwaysShow: true,
     meta: {
       title: '用户管理',
-      icon: 'index'
+      icon: 'index',
+      roles: ['admin']
     },
     children: [
       {
         path: 'modify',
         component: () => import('@/views/manage/user/modifyUser'),
         name: 'ModifyUser',
-        meta: { title: '编辑用户', icon: 'index' }
+        meta: { title: '编辑用户', icon: 'index', roles: ['admin'] }
       }
     ]
   },
@@ -177,25 +187,18 @@ export const constantRoutes = [
     alwaysShow: true,
     meta: {
       title: '组织管理',
-      icon: 'index'
+      icon: 'index',
+      roles: ['admin']
     },
     children: [
       {
         path: 'modify',
         component: () => import('@/views/manage/organization/modifyOrg'),
         name: 'ModifyOrg',
-        meta: { title: '编辑组织', icon: 'index' }
+        meta: { title: '编辑组织', icon: 'index', roles: ['admin'] }
       }
     ]
   }
-]
-
-/**
- * asyncRoutes
- * the routes that need to be dynamically loaded based on user roles
- */
-export const asyncRoutes = [
-  { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({

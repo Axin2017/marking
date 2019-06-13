@@ -61,7 +61,21 @@ export default {
     theme: '换肤',
     clipboardDemo: 'Clipboard',
     i18n: '国际化',
-    externalLink: '外链'
+    externalLink: '外链',
+    index: '首页',
+    markingList: '评分列表',
+    markingDetail: '评分详细',
+    markingManage: '评分管理',
+    ModifyMarking: '编辑评分',
+    AddMarking: '添加评分',
+    EditMarking: '编辑评分内容',
+    standerdManage: '评分标准管理',
+    ModifyStanderd: '标准编辑',
+    userManage: '用户管理',
+    ModifyUser: '编辑用户',
+    orgManage: '组织管理',
+    ModifyOrg: '编辑组织'
+
   },
   navbar: {
     logOut: '退出登录',
