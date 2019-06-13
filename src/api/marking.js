@@ -22,7 +22,25 @@ function getMarking(query) {
   })
 }
 
+function updateMarking(data) {
+  return request({
+    url: '/updateMarking',
+    method: 'post',
+    data
+  })
+}
+
+function deleteMarking(query) {
+  return request({
+    url: 'deleteMarking',
+    method: 'post',
+    data: query
+  })
+}
+
 export default {
   getMarking,
-  addMarking
+  addMarking,
+  updateMarking,
+  deleteMarking
 }

@@ -1,18 +1,12 @@
 <template>
   <div class="add-marking-wrapper">
     <div class="function-box">
-      选择类别:
-      <el-select v-model="nowOrg" placeholder="请选择">
-        <el-option v-for="org in orgList" :key="org._id" :label="org.name" :value="org._id" />
-      </el-select>
-      <template v-if="nowOrg">
-        <el-input ref="title" v-model="title" class="title-box" placeholder="请输入评分标题" />
-        <el-button type="success" class="commit-btn" @click="expandAll">全部展开</el-button>
-        <el-button type="success" class="commit-btn" @click="unexpandAll">全部收起</el-button>
-        <el-button type="primary" class="commit-btn" @click="commit">提交</el-button>
-      </template>
+      评分标题：{{ title }}
+      <el-button type="success" class="commit-btn" @click="expandAll">全部展开</el-button>
+      <el-button type="success" class="commit-btn" @click="unexpandAll">全部收起</el-button>
+      <el-button type="primary" class="commit-btn" @click="commit">提交</el-button>
     </div>
-    <div v-if="nowOrg" class="content-box">
+    <div class="content-box">
       <el-table :data="currentMarkingList" row-class-name="pointer" style="width: 100%" row-key="username" :expand-row-keys="expandRowKeys" @row-click="rowClick">
         <el-table-column type="expand">
           <div slot-scope="props" class="score-table">
@@ -36,47 +30,29 @@
 <script>
 import { parseTime } from '@/utils'
 import markingApi from '@/api/marking'
-import { getOrg } from '@/api/org'
 export default {
-  name: 'AddMarking',
+  name: 'EditMarking',
   components: {},
   data() {
     return {
-      orgList: [],
-      nowOrg: '',
       currentMarkingList: [],
       expandRowKeys: [],
-      title: ''
-    }
-  },
-  watch: {
-    nowOrg() {
-      if (this.nowOrg) {
-        const currentOrg = JSON.parse(JSON.stringify(this.orgList.find(o => o._id === this.nowOrg)))
-        const currentStanderd = currentOrg.standerd.standerd.map(s => {
-          const standerScore = { ...s }
-          standerScore.score = 0
-          return standerScore
-        })
-        currentOrg.users.forEach(user => {
-          user.standerdScore = JSON.parse(JSON.stringify(currentStanderd))
-          user.totalScore = 0
-        })
-        this.currentMarkingList = currentOrg.users
-      } else {
-        this.currentMarkingList = []
-      }
+      title: '',
+      marking: null
     }
   },
   mounted() {
-    this.getOrgData()
+    this.getMarkingData()
   },
   methods: {
-    refresh() {
-      this.nowOrg = ''
-      this.currentMarkingList = []
-      this.expandRowKeys = []
-      this.title = []
+    getMarkingData() {
+      markingApi.getMarking({ _id: this.id }).then(marking => {
+        if (marking.length) {
+          this.marking = marking[0]
+          this.currentMarkingList = this.marking.marking
+          this.title = this.marking.title
+        }
+      }).catch(e => { console.log(e) })
     },
     calcTotal(marking) {
       const totalWeight = marking.standerdScore.reduce((total, current) => {
@@ -121,23 +97,15 @@ export default {
         this.$refs.title.focus()
         return
       }
-      markingApi
-        .addMarking({ title: this.title, marking: this.currentMarkingList, addDate: parseTime(new Date()), updateDate: '' })
-        .then(r => {
-          this.$message.success('添加成功')
-          this.refresh()
-        })
-        .catch(e => {
-          this.$message.error('添加评分失败')
-          console.log(e)
-        })
-    },
-    getOrgData() {
-      getOrg().then(orgList => {
-        this.orgList = orgList
-      }).catch((e) => {
+      this.marking.updateDate = parseTime(new Date())
+      markingApi.updateMarking({
+        query: { _id: this.marking._id },
+        set: this.marking
+      }).then(r => {
+        this.$message.success('更新成功')
+      }).catch(e => {
         console.log(e)
-        this.$message.error('获取组织列表失败')
+        this.$message.error('更新失败')
       })
     }
   }

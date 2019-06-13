@@ -118,6 +118,22 @@ export const constantRoutes = [
         component: () => import('@/views/manage/marking/addMarking'),
         name: 'AddMarking',
         meta: { title: '添加评分', icon: 'index', noCache: false }
+      },
+      {
+        path: 'edit/:id',
+        component: () => import('@/views/manage/marking/editMarking'),
+        name: 'EditMarking',
+        hidden: true,
+        props: true,
+        meta: { title: '编辑评分内容', icon: 'index', noCache: false }
+      },
+      {
+        path: 'markingDetail/:id',
+        name: 'MarkingDetail',
+        hidden: true,
+        props: true,
+        meta: { title: '评分详细' },
+        component: () => import('@/views/manage/marking/markingDetail')
       }
     ]
   },
