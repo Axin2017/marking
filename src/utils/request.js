@@ -12,7 +12,6 @@ service.interceptors.request.use(
     // do something before request is sent
     if (config.method === 'post') {
       config.data = qs.stringify(config.data)
-      console.log(config.data)
     }
     return config
   },
@@ -26,7 +25,6 @@ service.interceptors.request.use(
 // response interceptor
 service.interceptors.response.use(
   response => {
-    console.log(response)
     if (response.data.status === 0) {
       return Promise.reject(new Error(response.data))
     }

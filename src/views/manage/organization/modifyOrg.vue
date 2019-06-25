@@ -2,7 +2,7 @@
   <div class="org-wrapper">
     <el-button type="primary" class="org-add" icon="el-icon-plus" @click="addDialogShow">添加</el-button>
     <div v-show="isNoData" class="nodata">暂时没有数据</div>
-    <div class="org-user-box">
+    <div v-if="orgList.length > 0" class="org-user-box">
       <div class="org-box">
         <el-collapse v-model="activeName" accordion class="org-list" @change="orgActivedChange">
           <el-collapse-item v-for="(org,i) in orgList" :key="i" :name="org.name">
@@ -103,7 +103,6 @@ export default {
     },
     // 评分标准改变
     standerdChange(org, i) {
-      console.log(org)
       org.standerd = this.standerdList.filter(s => s._id === org.standerdId)[0]
       org.isUpdate = true
       this.$set(this.orgList, i, org)
