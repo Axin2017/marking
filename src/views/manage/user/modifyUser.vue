@@ -33,6 +33,11 @@
         <el-form-item label="密码">
           <el-input v-model="userForm.password" />
         </el-form-item>
+        <el-form-item label="权限">
+          <el-checkbox-group v-model="userForm.roles">
+            <el-checkbox label="admin">管理员</el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="cancelAdd">取 消</el-button>
@@ -50,8 +55,9 @@ export default {
   data() {
     this.userFormTemp = {
       username: '',
-      sex: '',
-      password: ''
+      sex: '男',
+      password: '',
+      roles: []
     }
     return {
       userList: [],
@@ -59,7 +65,8 @@ export default {
       userForm: {
         username: '',
         sex: '男',
-        password: ''
+        password: '',
+        roles: []
       },
       isEdit: false,
       isNoData: false
@@ -91,7 +98,7 @@ export default {
       this.addDialogVisible = false
     },
     commit() {
-      if (!this.userForm.username || !this.userForm.password || !this.userForm.sex) {
+      if (!this.userForm.username || !this.userForm.password || !this.userForm.sex || !this.userForm.role) {
         this.$message.error('请将必填项填完整')
         return
       }
@@ -133,7 +140,7 @@ export default {
     },
     editUser(user) {
       this.isEdit = true
-      this.userForm = { ...user }
+      this.userForm = { ...this.userForm, ...user }
       this.addDialogVisible = true
     }
   }

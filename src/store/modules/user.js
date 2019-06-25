@@ -32,34 +32,32 @@ const actions = {
   // user login
   login({ dispatch, commit }, userInfo) {
     const { username, password } = userInfo
-    return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(data => {
-        // const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        if (!data.roles || data.roles.length === 0) {
-          data.roles = ['editor']
-        }
-        commit('SET_ROLES', data.roles)
-        dispatch('permission/generateRoutes', data.roles, { root: true })
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
+    return new Promise(async(resolve, reject) => {
+      const data = await login({ username: username.trim(), password: password })
+      if (!data) {
+        reject('登录失败，请检验你的账号密码是否有误')
+      }
+      commit('SET_TOKEN', data.token)
+      setToken(data.token)
+      if (!data.roles || data.roles.length === 0) {
+        data.roles = ['editor']
+      }
+      commit('SET_ROLES', data.roles)
+      const accessRoutes = await dispatch('permission/generateRoutes', data.roles, { root: true })
+      router.addRoutes(accessRoutes)
+      resolve()
     })
   },
 
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
-
+      getInfo(state.token).then(data => {
         if (!data) {
-          reject('Verification failed, please Login again.')
+          reject('登录失败，请检验你的账号密码是否有误')
         }
 
-        const { roles, name, avatar, introduction } = data
+        const { roles, username, avatar, introduction } = data
 
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
@@ -67,7 +65,7 @@ const actions = {
         }
 
         commit('SET_ROLES', roles)
-        commit('SET_NAME', name)
+        commit('SET_NAME', username)
         commit('SET_AVATAR', avatar)
         commit('SET_INTRODUCTION', introduction)
         resolve(data)

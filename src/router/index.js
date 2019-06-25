@@ -86,7 +86,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/Marking/index'),
         name: 'Marking',
-        meta: { title: '评分列表', icon: 'index' }
+        meta: { title: '评分列表', icon: 'list' }
       },
       {
         path: 'markingDetail/:id',
@@ -111,7 +111,7 @@ export const asyncRoutes = [
     alwaysShow: true,
     meta: {
       title: '评分管理',
-      icon: 'index',
+      icon: 'marking',
       roles: ['admin']
     },
     children: [
@@ -119,13 +119,13 @@ export const asyncRoutes = [
         path: 'modify',
         component: () => import('@/views/manage/marking/modifyMarking'),
         name: 'ModifyMarking',
-        meta: { title: '编辑评分', icon: 'index', roles: ['admin'] }
+        meta: { title: '编辑评分', icon: 'edit', roles: ['admin'] }
       },
       {
         path: 'add',
         component: () => import('@/views/manage/marking/addMarking'),
         name: 'AddMarking',
-        meta: { title: '添加评分', icon: 'index', noCache: false, roles: ['admin'] }
+        meta: { title: '添加评分', icon: 'add', noCache: false, roles: ['admin'] }
       },
       {
         path: 'edit/:id',
@@ -133,7 +133,7 @@ export const asyncRoutes = [
         name: 'EditMarking',
         hidden: true,
         props: true,
-        meta: { title: '编辑评分内容', icon: 'index', noCache: false, roles: ['admin'] }
+        meta: { title: '编辑评分内容', icon: 'edit', noCache: false, roles: ['admin'] }
       },
       {
         path: 'markingDetail/:id',
@@ -151,7 +151,7 @@ export const asyncRoutes = [
     alwaysShow: true,
     meta: {
       title: '评分标准管理',
-      icon: 'index',
+      icon: 'standerd',
       roles: ['admin']
     },
     children: [
@@ -159,7 +159,7 @@ export const asyncRoutes = [
         path: 'modify',
         component: () => import('@/views/manage/standerd/modifyStanderd'),
         name: 'ModifyStanderd',
-        meta: { title: '编辑标准', icon: 'index', roles: ['admin'] }
+        meta: { title: '编辑标准', icon: 'edit', roles: ['admin'] }
       }
     ]
   },
@@ -169,7 +169,7 @@ export const asyncRoutes = [
     alwaysShow: true,
     meta: {
       title: '用户管理',
-      icon: 'index',
+      icon: 'user',
       roles: ['admin']
     },
     children: [
@@ -177,7 +177,7 @@ export const asyncRoutes = [
         path: 'modify',
         component: () => import('@/views/manage/user/modifyUser'),
         name: 'ModifyUser',
-        meta: { title: '编辑用户', icon: 'index', roles: ['admin'] }
+        meta: { title: '编辑用户', icon: 'edit', roles: ['admin'] }
       }
     ]
   },
@@ -187,7 +187,7 @@ export const asyncRoutes = [
     alwaysShow: true,
     meta: {
       title: '组织管理',
-      icon: 'index',
+      icon: 'org',
       roles: ['admin']
     },
     children: [
@@ -195,7 +195,7 @@ export const asyncRoutes = [
         path: 'modify',
         component: () => import('@/views/manage/organization/modifyOrg'),
         name: 'ModifyOrg',
-        meta: { title: '编辑组织', icon: 'index', roles: ['admin'] }
+        meta: { title: '编辑组织', icon: 'edit', roles: ['admin'] }
       }
     ]
   }

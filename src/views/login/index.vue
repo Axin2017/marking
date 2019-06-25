@@ -164,8 +164,12 @@ export default {
               this.$router.push({ path: this.redirect || '/' })
               this.loading = false
             })
-            .catch(() => {
+            .catch((error) => {
               this.loading = false
+              this.$message({
+                message: error || 'Has Error',
+                type: 'error'
+              })
             })
         } else {
           console.log('error submit!!')
