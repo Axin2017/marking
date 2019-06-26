@@ -42,6 +42,7 @@ const actions = {
       if (!data.roles || data.roles.length === 0) {
         data.roles = ['editor']
       }
+      commit('SET_NAME', data.username)
       commit('SET_ROLES', data.roles)
       const accessRoutes = await dispatch('permission/generateRoutes', data.roles, { root: true })
       router.addRoutes(accessRoutes)
@@ -56,14 +57,11 @@ const actions = {
         if (!data) {
           reject('登录失败，请检验你的账号密码是否有误')
         }
-
-        const { roles, username, avatar, introduction } = data
-
-        // roles must be a non-empty array
-        if (!roles || roles.length <= 0) {
-          reject('getInfo: roles must be a non-null array!')
+        if (!data.roles || data.roles.length <= 0) {
+          // reject('getInfo: roles must be a non-null array!')
+          data.roles = ['normarl']
         }
-
+        const { roles, username, avatar, introduction } = data
         commit('SET_ROLES', roles)
         commit('SET_NAME', username)
         commit('SET_AVATAR', avatar)

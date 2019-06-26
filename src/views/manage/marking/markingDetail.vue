@@ -46,7 +46,6 @@ export default {
       }).catch(e => { console.log(e) })
     },
     rowClick(row, event, column) {
-      debugger
       if (this.expandRowKeys.includes(row.username)) {
         this.expandRowKeys.splice(this.expandRowKeys.indexOf(row.username), 1)
       } else {
