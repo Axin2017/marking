@@ -1,7 +1,7 @@
 <template>
   <div class="add-marking-wrapper">
     <div class="function-box">
-      选择类别:
+      选择组织:
       <el-select v-model="nowOrg" placeholder="请选择">
         <el-option v-for="org in orgList" :key="org._id" :label="org.name" :value="org._id" />
       </el-select>
@@ -53,6 +53,10 @@ export default {
     nowOrg() {
       if (this.nowOrg) {
         const currentOrg = JSON.parse(JSON.stringify(this.orgList.find(o => o._id === this.nowOrg)))
+        if (!currentOrg.standerd || !currentOrg.users) {
+          this.$message.error('读取组织评分标准或组织用户失败，请先给组织添加标准和用户')
+          return
+        }
         const currentStanderd = currentOrg.standerd.standerd.map(s => {
           const standerScore = { ...s }
           standerScore.score = 0
