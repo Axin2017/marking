@@ -84,7 +84,7 @@ export default {
         })
     },
     onMarkingClick(row, column, event) {
-      this.$router.push({ path: 'MarkingDetail/' + row._id })
+      this.$router.push({ path: '/marking/MarkingDetail/' + row._id })
     },
     editMarking(marking) {
       this.$router.push({ path: 'edit/' + marking._id })

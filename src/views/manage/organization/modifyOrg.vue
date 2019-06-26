@@ -182,7 +182,7 @@ export default {
         // 更新
         updateOrg({
           query: { _id: this.orgForm._id },
-          set: { $set: { name: this.orgForm.name }}
+          set: { name: this.orgForm.name }
         }).then(r => {
           this.$message.success('更新成功')
           this.orgList = []

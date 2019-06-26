@@ -134,14 +134,6 @@ export const asyncRoutes = [
         hidden: true,
         props: true,
         meta: { title: '编辑评分内容', icon: 'edit', noCache: false, roles: ['admin'] }
-      },
-      {
-        path: 'markingDetail/:id',
-        name: 'MarkingDetail',
-        hidden: true,
-        props: true,
-        meta: { title: '评分详细', roles: ['admin'] },
-        component: () => import('@/views/manage/marking/markingDetail')
       }
     ]
   },
