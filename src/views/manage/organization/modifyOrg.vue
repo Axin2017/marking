@@ -33,18 +33,18 @@
           </el-radio-group>
         </div>
       </div>
-      <el-dialog :title="isEdit?'编辑':'添加'" :visible="addDialogVisible" width="400px" class="add-dialog" center :show-close="false">
-        <el-form label-width="80px" :model="orgForm">
-          <el-form-item label="名称">
-            <el-input v-model="orgForm.name" />
-          </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="cancelAdd">取 消</el-button>
-          <el-button type="primary" @click="commit">确 定</el-button>
-        </span>
-      </el-dialog>
     </div>
+    <el-dialog :title="isEdit?'编辑':'添加'" :visible="addDialogVisible" width="400px" class="add-dialog" center :show-close="false">
+      <el-form label-width="80px" :model="orgForm">
+        <el-form-item label="名称">
+          <el-input v-model="orgForm.name" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelAdd">取 消</el-button>
+        <el-button type="primary" @click="commit">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -306,5 +306,9 @@ export default {
   padding-left: 10px;
   border-bottom: 1px solid #ccc;
   margin-bottom: 10px;
+}
+.nodata{
+  padding: 50px;
+  text-align: center;
 }
 </style>

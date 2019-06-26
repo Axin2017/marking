@@ -5,7 +5,7 @@
     <div class="user-list">
       <el-row :gutter="20">
         <el-col v-for="user in userList" :key="user._id" :span="2">
-          <div class="user-box">
+          <div v-if="user.username !== '超级管理员'" class="user-box">
             <div :class="user.sex === '女'?'user-img-girl':'user-img-boy'" />
             <div class="user-name">
               {{ user.username }}
@@ -82,7 +82,8 @@ export default {
     getUserList() {
       getUser().then(userList => {
         this.userList = userList
-        if (this.userList && this.userList.length) {
+        // 超级管理员不显示
+        if (this.userList && this.userList.length > 1) {
           this.isNoData = false
         } else {
           this.isNoData = true
@@ -98,7 +99,7 @@ export default {
       this.addDialogVisible = false
     },
     commit() {
-      if (!this.userForm.username || !this.userForm.password || !this.userForm.sex || !this.userForm.role) {
+      if (!this.userForm.username || !this.userForm.password || !this.userForm.sex || !this.userForm.roles) {
         this.$message.error('请将必填项填完整')
         return
       }
@@ -177,6 +178,10 @@ export default {
 }
 .user-name {
   margin: 5px auto;
+  text-align: center;
+}
+.nodata{
+  padding: 50px;
   text-align: center;
 }
 </style>
