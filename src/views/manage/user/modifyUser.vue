@@ -99,7 +99,7 @@ export default {
       this.addDialogVisible = false
     },
     commit() {
-      if (!this.userForm.username || !this.userForm.password || !this.userForm.sex || !this.userForm.roles) {
+      if (!this.userForm.username || !this.userForm.password || !this.userForm.sex) {
         this.$message.error('请将必填项填完整')
         return
       }
